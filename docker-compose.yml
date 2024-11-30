@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: real_postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=real
+      - POSTGRES_USER=real
+      - POSTGRES_DB=realdb
+    networks:
+      - real_network
+    restart: on-failure
+
+networks:
+  real_network:
+    driver: bridge
+  

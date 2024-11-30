@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+
+  name     String
+  phone_no String @unique @db.VarChar(15)
+  password String
+
+  email String?
+
+  contacts  Contact[]
+  reports   Report[]
+  spam_info Spam @relation(fields: [phone_no], references: [phone_no])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([phone_no])
+  @@index([name])
+}
+
+model Spam {
+  phone_no String @id @unique @db.VarChar(15)
+
+  report_count Int
+  reports      Report[]
+  
+  registered_contacts Contact[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user       User?
+
+  @@index([phone_no])
+}
+
+model Contact {
+  id String @id @default(cuid())
+
+  name     String
+  phone_no String  @db.VarChar(15)
+  email    String?
+
+  owner_id String @unique
+  owner    User   @relation(fields: [owner_id], references: [id])
+
+  spam_info Spam  @relation(fields: [phone_no], references: [phone_no])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([phone_no])
+  @@index([name])
+}
+
+
+model Report {
+  id String @id @default(cuid())
+
+  user_id       String
+  spam_phone_no String
+
+  user User @relation(fields: [user_id], references: [id])
+  spam Spam @relation(fields: [spam_phone_no], references: [phone_no])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([user_id, spam_phone_no])
+}
