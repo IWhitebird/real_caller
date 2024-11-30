@@ -38,7 +38,8 @@ Ensure you have the following installed:
    
 
 ### Documentaion
-	```bash
-	Swagger UI: http://localhost:5000/api
-	```
+
+```bash
+Swagger UI: http://localhost:5000/api
+```
 	
